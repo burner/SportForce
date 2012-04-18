@@ -226,9 +226,11 @@ class SportForce(object):
 		if len(sys.argv) > 1:
 			try:
 				time = int(sys.argv[1]) * 60
+				print time
 			except:
+				print "fuck"
 				None
-		gobject.timeout_add_seconds(10, self.popup)
+		gobject.timeout_add_seconds(time, self.popup)
 
 	def popup(self):
 		insults = ["Get moving", "Fat people have less sex.", "Move your ass", "Move your lazy ass", 
@@ -348,7 +350,7 @@ class SportForce(object):
 	def togglePause(self, widget):
 		self.pause = not self.pause
 		if self.pause:
-			gobject.timeout_add_seconds(1000000000000, self.popup)
+			gobject.timeout_add_seconds(60*60*24, self.popup)
 		else:
 			self.activateCouter()
 
