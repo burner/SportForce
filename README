@@ -1,1 +1,5 @@
 This tray programm tells you to do sport, listen!
+
+to install copy the sport.png into /usr/share
+and the sportforce.py into any folder that is in your
+path sportforce.py 10 will set the timer to 10 minutes
