@@ -34,7 +34,7 @@ class SportForce(object):
 	def removeItem(self, widget):
 		it = self.sportList.get_selection()
 		toRemove = it.get_selected()[0].get_value(it.get_selected()[1], 0)
-		conn = sqlite3.connect('filename')
+		conn = sqlite3.connect(filename)
 		cur = conn.cursor()
 		cur.execute("DELETE FROM current WHERE type='%s'"%toRemove)
 		conn.commit()
@@ -72,12 +72,17 @@ class SportForce(object):
 
 	def fill(self):
 		liststore = gtk.ListStore(str, float, float, float, float)
-		if not os.path.isfile("filename"):
+		if not os.path.isfile(filename):
+			conn = sqlite3.connect(filename)
+			cur = conn.cursor()
+			cur.execute("INSERT into current VALUES(?, ?, ?, ?, ?)", ("pushups", 13.0, 5.0, 50.0, 0.2))
+			cur.execute("INSERT into current VALUES(?, ?, ?, ?, ?)", ("pullups", 6.0, 3.0, 20.0, 0.2))
+			conn.commit()
 			liststore.append(["pushups", 10.0, 5.0, 50.0, 0.1])
 			liststore.append(["pullups", 6.0, 3.0, 20.0, 0.1])
 			return liststore
 		else:
-			conn = sqlite3.connect('filename')
+			conn = sqlite3.connect(filename)
 			cur = conn.cursor()
 			cur.execute("SELECT * FROM current")
 			rslt = cur.fetchone()
@@ -91,7 +96,7 @@ class SportForce(object):
 		payload = (self.ac.get_text(), self.cur.get_text(), self.mn.get_text(), 
 			self.mx.get_text(), self.gr.get_text())
 		print payload	
-		conn = sqlite3.connect('filename')
+		conn = sqlite3.connect(filename)
 		cur = conn.cursor()
 		stmt = "SELECT * FROM current WHERE type='%s'"%payload[0]
 		print stmt
@@ -164,7 +169,7 @@ class SportForce(object):
 		self.startWin.show()
 
 	def makeTable(self):
-		conn = sqlite3.connect('filename')
+		conn = sqlite3.connect(filename)
 		cur = conn.cursor()
 		cur.execute("CREATE TABLE current (type TEXT, current DEC, minimal DEC,"
 			+ " maximal DEC, growth DEC)")
@@ -173,7 +178,7 @@ class SportForce(object):
 		conn.commit()
 
 	def __init__(self):
-		if not os.path.isfile("filename"):
+		if not os.path.isfile(filename):
 			self.makeAdjustmentWindow()
 			self.makeTable()
 			
@@ -321,7 +326,7 @@ class SportForce(object):
 			"Most people give up just when they're about to achieve success. They quit on the one yard line. They give up at the last minute of the game, one foot from a winning touchdown.",
 			"Pain is nothing compared to what it feels like to quit."]
 
-		conn = sqlite3.connect('filename')
+		conn = sqlite3.connect(filename)
 		cur = conn.cursor()
 		s = cur.execute("SELECT * FROM current")
 		rslt = s.fetchone()
@@ -333,8 +338,9 @@ class SportForce(object):
 		sel = random.choice(sel)
 		new = sel[1] + sel[4]
 		if new < sel[3]:
-			cur.execute("UPDATE current SET current = %f WHERE %s"%
-				(new, sel[1]))
+			print "UPDATE current SET current = %f WHERE type='%s'"%(new, sel[0])	
+			cur.execute("UPDATE current SET current = %f WHERE type='%s'"%
+				(new, sel[0]))
 			conn.commit()
 
 		d = gtk.MessageDialog(None, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_INFO,
