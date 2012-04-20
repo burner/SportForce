@@ -355,10 +355,10 @@ class SportForce(object):
 
 	def togglePause(self, widget):
 		self.pause = not self.pause
-		if self.pause:
-			gobject.timeout_add_seconds(60*60*24, self.popup)
-		else:
-			self.activateCouter()
+		#if self.pause:
+		#	gobject.timeout_add_seconds(60*60*24, self.popup)
+		#else:
+		#	self.activateCouter()
 
 	def _set_win_position(self):
 		screen, geometry, orient = self.tray_icon.get_geometry()
